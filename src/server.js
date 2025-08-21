@@ -3,9 +3,12 @@ const app = express();
 const dotenv= require('dotenv').config();
 const morgan = require('morgan');
 const helmet = require('helmet');
-const cors = require('cors')
+const cors = require('cors');
+const cookieParser = require('cookie-parser')
 
-
+// Pars data json
+app.use(express.json());
+app.use(cookieParser())
 
 
 // Middleware 
