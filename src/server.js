@@ -4,7 +4,8 @@ const dotenv= require('dotenv').config();
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const notFound = require('./middlewares/notFound');
 
 // Pars data json
 app.use(express.json());
@@ -23,6 +24,8 @@ app.get('/',(req, res)=>{
     res.status(200).json({message:"start server code-negar " ,statuscode:200})
 })
 
+// not found route middleware
+app.use(notFound)
 
 
 
