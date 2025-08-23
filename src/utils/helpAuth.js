@@ -1,8 +1,7 @@
 const {sign , verify} = require('jsonwebtoken');
 const {hash , compare} = require('bcryptjs');
 
-const securityCode = process.env.SRC_CODE;
-
+const securityCode = process.env.SRC_CODE 
 if(!securityCode){
     throw new Error('Security code is not found')
 }
