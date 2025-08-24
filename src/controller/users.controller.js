@@ -1,5 +1,6 @@
 const UsersServices = require('../services/users.services');
-const {hashedPassword} = require('../utils/helpAuth')
+const {hashedPassword , verifyPassword} = require('../utils/helpAuth');
+
 
 async function createUser(req , res) {
     try{
@@ -36,7 +37,45 @@ async function createUser(req , res) {
     }
 }
 
+async function loginUser(req , res) {
+    try{
+        const {email , password} = req.body;
+        console.log("req =>" , req.body)
+        // exist user
+        const existUser = await UsersServices.getUserByEmail(email);
+        if(!existUser) return res.status(400).json({
+            message:"User is not found",
+            error:error.message,
+            statusCode:400
+        });
+
+        // isMatch Password
+        const isMatchPassword =  await verifyPassword(password , existUser.password);
+        if(!isMatchPassword) return res.status(400).json({
+            message:"The password is not valid",
+            error:error.message,
+            statusCode:400
+        })
+
+        const userLogin =   await UsersServices.login(email , existUser.password);
+        if(userLogin){
+            res.status(200).json({
+                message:"Login user successfully ✅",
+                data:{userLogin}
+        })      
+        }
+
+
+    } catch(error){
+        return res.status(500).json({
+            message:"Server Internal error Login users",
+            error:error.message,
+            statusCode:500
+        })
+    }
+}
 
 module.exports = {
     createUser,
+    loginUser
 }
