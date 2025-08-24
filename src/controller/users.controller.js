@@ -1,5 +1,5 @@
 const UsersServices = require('../services/users.services');
-const {hashedPassword , verifyPassword} = require('../utils/helpAuth');
+const {hashedPassword , verifyPassword , generateToken} = require('../utils/helpAuth');
 
 
 async function createUser(req , res) {
@@ -40,12 +40,10 @@ async function createUser(req , res) {
 async function loginUser(req , res) {
     try{
         const {email , password} = req.body;
-        console.log("req =>" , req.body)
         // exist user
         const existUser = await UsersServices.getUserByEmail(email);
         if(!existUser) return res.status(400).json({
             message:"User is not found",
-            error:error.message,
             statusCode:400
         });
 
@@ -53,15 +51,22 @@ async function loginUser(req , res) {
         const isMatchPassword =  await verifyPassword(password , existUser.password);
         if(!isMatchPassword) return res.status(400).json({
             message:"The password is not valid",
-            error:error.message,
             statusCode:400
         })
 
         const userLogin =   await UsersServices.login(email , existUser.password);
         if(userLogin){
+
+            const token = generateToken({
+                id:existUser._id,
+                username:existUser.username,
+                email:existUser.email,
+                role:existUser.role
+            })
+            res.setHeader("Authorization",`Bearer ${token}`)
             res.status(200).json({
                 message:"Login user successfully ✅",
-                data:{userLogin}
+                data:{token}
         })      
         }
 
@@ -75,7 +80,9 @@ async function loginUser(req , res) {
     }
 }
 
+
+
 module.exports = {
     createUser,
-    loginUser
+    loginUser,
 }
