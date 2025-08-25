@@ -25,7 +25,7 @@ async function createUser(req , res) {
         return res.status(201).json({
             message:"Resister user successfully ✅",
             statusCode:201,
-            data:{newUser}
+            data:newUser
         })
 
     } catch (error){
